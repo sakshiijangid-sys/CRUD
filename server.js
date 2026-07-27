@@ -12,6 +12,10 @@ const SEED_TASKS = [
 
 const tasks = SEED_TASKS.map((task) => ({ ...task }));
 
+function nextTaskId() {
+  return tasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1;
+}
+
 app.get('/', (req, res) => {
   res.json({
     name: 'Task API',
@@ -37,6 +41,18 @@ app.get('/tasks/:id', (req, res) => {
   }
 
   res.json(task);
+});
+
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
+
+  if (typeof title !== 'string' || title.trim() === '') {
+    return res.status(400).json({ error: 'title is required and cannot be empty' });
+  }
+
+  const newTask = { id: nextTaskId(), title: title.trim(), done: false };
+  tasks.push(newTask);
+  res.status(201).json(newTask);
 });
 
 app.listen(PORT, () => {

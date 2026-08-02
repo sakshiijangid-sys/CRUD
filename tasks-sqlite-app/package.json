@@ -1,0 +1,14 @@
+{
+  "name": "tasks-sqlite-app",
+  "version": "1.0.0",
+  "description": "A simple application to manage tasks using SQLite.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "sqlite3": "^5.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,48 +1,56 @@
-# Task API
+# Tasks SQLite App
 
-A small Express CRUD API for managing tasks in memory. It is designed for the workshop stages and includes Swagger UI documentation.
+## Overview
+This project is a simple application that utilizes a SQLite database to manage tasks. It creates a database named `tasks.db` and a table called `tasks` to store task information.
 
-## Run locally
+## Database Schema
+The `tasks` table consists of the following columns:
+- **id**: An integer that serves as the primary key for each task.
+- **title**: A string that represents the title of the task.
+- **done**: A boolean that indicates whether the task is completed.
 
+## Example Tasks
+Upon the first run of the application, three example tasks will be inserted into the database if the `tasks` table is empty. The example tasks are:
+1. Title: "Buy groceries", Done: false
+2. Title: "Read a book", Done: false
+3. Title: "Go for a walk", Done: false
+
+## Getting Started
+
+### Why SQLite
+SQLite was chosen because it is a lightweight, serverless database that works well for a small task-tracking API. It requires no separate database server, stores data in a single file, and makes the project easy to run for anyone cloning the repository.
+
+### Where the database file is stored
+The database file is stored in the project root as `tasks.db`. The application creates this file automatically the first time it runs.
+
+### Prerequisites
+- Node.js installed on your machine.
+- npm (Node Package Manager) which comes with Node.js.
+
+### Installation
+1. Clone the repository or download the project files.
+2. Navigate to the project directory in your terminal.
+3. Run the following command to install the required dependencies:
+   ```
+   npm install
+   ```
+
+### Running the Application
+To start the application, use the following command:
 ```bash
-npm install
 npm start
 ```
 
-The API will be available at:
-- http://localhost:3000/
-- http://localhost:3000/health
-- http://localhost:3000/docs
+This will start the Express server, create `tasks.db` automatically if it does not exist, create the `tasks` table, and make the API available at `http://localhost:3000/`.
 
-## Endpoints
+### Database viewer screenshot
+![Database viewer screenshot](./database-viewer.svg)
 
-| Method | Path | Description |
-| --- | --- | --- |
-| GET | / | API overview |
-| GET | /health | Health check |
-| GET | /tasks | List tasks |
-| GET | /tasks/:id | Get one task |
-| POST | /tasks | Create a task |
-| PUT | /tasks/:id | Update a task |
-| DELETE | /tasks/:id | Delete a task |
-| GET | /stats | Task summary |
-| POST | /reset | Reset the in-memory store |
-
-## Example requests
-
-```bash
-curl -i http://localhost:3000/tasks
+### Example SQL query
+I executed a query like this while exploring the database:
+```sql
+SELECT id, title, done FROM tasks WHERE done = 0;
 ```
 
-Example response:
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-[{"id":1,"title":"Buy groceries","done":false}]
-```
-
-## Notes
-
-This API uses in-memory storage, so restarting the server resets all tasks.
+## License
+This project is licensed under the MIT License.

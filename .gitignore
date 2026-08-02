@@ -98,6 +98,10 @@ dist
 # Sveltekit cache directory
 .svelte-kit/
 
+# Local SQLite database file
+tasks.db
+
+
 # vitepress build output
 **/.vitepress/dist
 

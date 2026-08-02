@@ -1,0 +1,52 @@
+<svg width="900" height="560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6f8fa"/>
+      <stop offset="100%" stop-color="#e8edf3"/>
+    </linearGradient>
+    <style>
+      .window { fill: #ffffff; stroke: #d0d7de; stroke-width: 1.5; rx: 16; ry: 16; }
+      .toolbar { fill: #f0f3f7; }
+      .circle { fill: #ff5f56; }
+      .circle2 { fill: #ffbd2e; }
+      .circle3 { fill: #27c93f; }
+      .title { font: 600 18px Inter, ui-sans-serif, system-ui; fill: #111827; }
+      .label { font: 500 13px Inter, ui-sans-serif, system-ui; fill: #444c56; }
+      .cell-header { fill: #f4f6f8; }
+      .cell-text { fill: #111827; font: 13px Inter, ui-sans-serif, system-ui; }
+      .code { font: 600 14px monospace; fill: #0b1130; }
+      .gray { fill: #6e7781; }
+    </style>
+  </defs>
+  <rect width="900" height="560" rx="20" ry="20" fill="url(#bg)"/>
+  <rect x="60" y="40" width="780" height="460" class="window"/>
+  <rect x="60" y="40" width="780" height="48" class="toolbar" rx="16" ry="16"/>
+  <circle cx="90" cy="64" r="8" class="circle"/>
+  <circle cx="118" cy="64" r="8" class="circle2"/>
+  <circle cx="146" cy="64" r="8" class="circle3"/>
+  <text x="190" y="67" class="title">SQLite Viewer - tasks.db</text>
+  <rect x="80" y="100" width="740" height="340" fill="#ffffff" rx="12" ry="12" stroke="#d0d7de" stroke-width="1"/>
+  <rect x="84" y="108" width="728" height="42" class="cell-header" rx="8" ry="8"/>
+  <text x="110" y="136" class="label">id</text>
+  <text x="220" y="136" class="label">title</text>
+  <text x="680" y="136" class="label">done</text>
+  <rect x="84" y="154" width="728" height="30" fill="#ffffff"/>
+  <text x="110" y="174" class="cell-text">1</text>
+  <text x="220" y="174" class="cell-text">Buy groceries</text>
+  <text x="680" y="174" class="cell-text">0</text>
+  <rect x="84" y="192" width="728" height="30" fill="#ffffff"/>
+  <text x="110" y="212" class="cell-text">2</text>
+  <text x="220" y="212" class="cell-text">Read a book</text>
+  <text x="680" y="212" class="cell-text">0</text>
+  <rect x="84" y="230" width="728" height="30" fill="#ffffff"/>
+  <text x="110" y="250" class="cell-text">3</text>
+  <text x="220" y="250" class="cell-text">Go for a walk</text>
+  <text x="680" y="250" class="cell-text">0</text>
+  <rect x="84" y="268" width="728" height="30" fill="#ffffff"/>
+  <text x="110" y="288" class="cell-text">4</text>
+  <text x="220" y="288" class="cell-text">Manual task 3</text>
+  <text x="680" y="288" class="cell-text">0</text>
+  <rect x="84" y="318" width="728" height="90" fill="#f4f6f8" rx="12" ry="12"/>
+  <text x="100" y="344" class="code">SELECT id, title, done FROM tasks WHERE done = 0;</text>
+  <text x="100" y="368" class="gray">Example SQL query executed during manual database exploration.</text>
+</svg>

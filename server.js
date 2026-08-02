@@ -1,22 +1,19 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
+const {
+  initDatabase,
+  getAllTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask,
+} = require('./db');
+
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-
-const SEED_TASKS = [
-  { id: 1, title: 'Buy groceries', done: false },
-  { id: 2, title: 'Walk the dog', done: true },
-  { id: 3, title: 'Read a book', done: false },
-];
-
-const tasks = SEED_TASKS.map((task) => ({ ...task }));
-
-function nextTaskId() {
-  return tasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1;
-}
 
 app.get('/', (req, res) => {
   res.json({
@@ -30,78 +27,104 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/tasks', (req, res) => {
-  res.json(tasks);
+app.get('/tasks', async (req, res) => {
+  try {
+    const tasks = await getAllTasks();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.get('/tasks/:id', (req, res) => {
+app.get('/tasks/:id', async (req, res) => {
   const taskId = Number(req.params.id);
-  const task = tasks.find((item) => item.id === taskId);
 
-  if (!task) {
-    return res.status(404).json({ error: `Task ${taskId} not found` });
+  if (Number.isNaN(taskId)) {
+    return res.status(404).json({ error: 'Task not found' });
   }
 
-  res.json(task);
+  try {
+    const task = await getTaskById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.post('/tasks', (req, res) => {
+app.post('/tasks', async (req, res) => {
   const { title } = req.body;
 
   if (typeof title !== 'string' || title.trim() === '') {
     return res.status(400).json({ error: 'title is required and cannot be empty' });
   }
 
-  const newTask = { id: nextTaskId(), title: title.trim(), done: false };
-  tasks.push(newTask);
-  res.status(201).json(newTask);
+  try {
+    const newTask = await createTask(title.trim());
+    res.status(201).json(newTask);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.put('/tasks/:id', (req, res) => {
+app.put('/tasks/:id', async (req, res) => {
   const taskId = Number(req.params.id);
-  const task = tasks.find((item) => item.id === taskId);
-
-  if (!task) {
-    return res.status(404).json({ error: `Task ${taskId} not found` });
-  }
-
   const { title, done } = req.body;
 
-  if (title !== undefined) {
-    if (typeof title !== 'string' || title.trim() === '') {
-      return res.status(400).json({ error: 'title cannot be empty' });
-    }
-    task.title = title.trim();
+  if (title !== undefined && (typeof title !== 'string' || title.trim() === '')) {
+    return res.status(400).json({ error: 'title cannot be empty' });
   }
 
-  if (done !== undefined) {
-    if (typeof done !== 'boolean') {
-      return res.status(400).json({ error: 'done must be a boolean' });
-    }
-    task.done = done;
+  if (done !== undefined && typeof done !== 'boolean') {
+    return res.status(400).json({ error: 'done must be a boolean' });
   }
 
   if (title === undefined && done === undefined) {
     return res.status(400).json({ error: 'request body must include title and/or done' });
   }
 
-  res.json(task);
+  try {
+    const updatedTask = await updateTask(taskId, title === undefined ? undefined : title.trim(), done);
+
+    if (!updatedTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.delete('/tasks/:id', (req, res) => {
+app.delete('/tasks/:id', async (req, res) => {
   const taskId = Number(req.params.id);
-  const index = tasks.findIndex((item) => item.id === taskId);
 
-  if (index === -1) {
-    return res.status(404).json({ error: `Task ${taskId} not found` });
+  try {
+    const deleted = await deleteTask(taskId);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
   }
-
-  tasks.splice(index, 1);
-  res.status(204).send();
 });
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(PORT, () => {
-  console.log(`Express server is running at http://localhost:${PORT}/`);
-});
+initDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Express server is running at http://localhost:${PORT}/`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to initialize database', err);
+    process.exit(1);
+  });
